@@ -6,6 +6,7 @@ dash-core-components==0.12.6
 dash-html-components==0.7.0
 dash-renderer==0.10.0
 decorator==4.1.2
+Faker==0.8.4
 Flask==0.12.2
 Flask-Compress==1.4.0
 Flask-SeaSurf==0.2.2
@@ -23,6 +24,7 @@ plotly==2.0.15
 python-dateutil==2.6.1
 pytz==2017.2
 requests==2.18.4
+simulacrum==0.3
 six==1.11.0
 traitlets==4.3.2
 urllib3==1.22
