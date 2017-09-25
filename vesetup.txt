@@ -1,0 +1,8 @@
+conda install virtualenv
+# pip install virtualenv
+
+virtualenv --python=python3.6 ve
+
+source activate ve
+
+pip install -r requirements.txt
