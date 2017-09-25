@@ -2,12 +2,17 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+from dash.dependencies import Input, Output
+
 import plotly.graph_objs as go
 import pandas as pd
 
+import metric_calculations as mc
+
 app = dash.Dash()
 
-agricultural_data = pd.read_csv('data/usa-agricultural-exports-2011.csv')
+raw_data = pd.read_csv('data/cover-output-1506343018603.csv')
+roc_data = mc.build_roc_data(raw_data)
 
 def generate_table(dataframe, max_rows=10):
     return html.Table(
@@ -22,46 +27,73 @@ def generate_table(dataframe, max_rows=10):
 
 
 table = html.Div(children=[
-    html.H4(children='US Agriculture Exports (2011)'),
-    generate_table(agricultural_data)
+    html.H4(children='Assurance Scoring Threshold Explorer'),
+    generate_table(roc_data)
 ])
 
-gdp_life_exp_data = pd.read_csv('data/gdp-life-exp-2007.csv')
-graph = dcc.Graph(
-        id='life-exp-vs-gdp',
-        figure={
-            'data': [
-                go.Scatter(
-                    x=gdp_life_exp_data[gdp_life_exp_data['continent'] == i]['gdp per capita'],
-                    y=gdp_life_exp_data[gdp_life_exp_data['continent'] == i]['life expectancy'],
-                    text=gdp_life_exp_data[gdp_life_exp_data['continent'] == i]['country'],
-                    mode='markers',
-                    opacity=0.7,
-                    marker={
-                        'size': 15,
-                        'line': {'width': 0.5, 'color': 'white'}
-                    },
-                    name = i
-                ) for i in gdp_life_exp_data.continent.unique()
-            ],
-            'layout': go.Layout(
-                xaxis={'type': 'log', 'title': 'GDP Per Capita'},
-                yaxis={'title': 'Life Expectancy'},
-                margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
-                legend={'x': 0, 'y': 1},
-                hovermode='closest'
-            )
-        }
-    )
 
-slider = dcc.Slider(value=4, min=-10, max=20, step=0.5,
-           marks={-5: '-5 Degrees', 0: '0', 10: '10 Degrees'})
+graph = dcc.Graph(
+    id='roc-curve',
+    figure={
+        'data': [
+            go.Scatter(
+                x=roc_data['FPR'],
+                y=roc_data['TPR'],
+                text='hello world',
+                mode='lines+markers',
+                opacity=0.7,
+                marker={
+                    'size': 5,
+                    'line': {'width': 0.5, 'color': 'white'}
+                },
+            )
+        ],
+        'layout': go.Layout(
+            xaxis={'type': 'linear', 'title': 'FPR'},
+            yaxis={'title': 'TPR'},
+            margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+            legend={'x': 0, 'y': 1},
+            hovermode='closest'
+        )
+    }
+)
+
+
+slider = dcc.Slider(
+    id='slider',
+    value=0.5,
+    min=0.0,
+    max=1.0,
+    step=0.01,
+    marks={i/10: '{}'.format(i/10) for i in range(0, 10)}
+)
+
+
+tags = dcc.Dropdown(
+    options=[{'label': c, 'value': c} for c in raw_data.columns],
+    value=['score', 'class'],
+    multi=True
+)
+
 
 app.layout = html.Div([
+    tags,
     graph,
     table,
-    slider
+    slider,
+    html.Div(id='threshold'),
 ])
+
+
+@app.callback(
+    Output(component_id='threshold', component_property='children'),
+    [Input(component_id='slider', component_property='value')]
+)
+def update_text(input_value):
+    return 'Threshold: "{}"'.format(input_value)
+
+
+
 
 if __name__ == '__main__':
     app.run_server()
