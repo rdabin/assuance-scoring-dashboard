@@ -14,7 +14,11 @@ import pandas as pd
 # returns roc_df, a dataframe with columns 'threshold', 'TPR', 'FPR'
 def build_roc_data(df):
     roc_list = []
-    for threshold in df['score'].unique():
+    # Use the unique list of scores as a set of thresholds
+    threshold_set = set(df['score'])
+    # Make sure that we include 0 and 1
+    threshold_set.update([0, 1])
+    for threshold in threshold_set:
         TP, FP, TN, FN = confusion_matrix(df, threshold)
         TPR = TP / (TP + FN)
         FPR = FP / (FP + TN)
