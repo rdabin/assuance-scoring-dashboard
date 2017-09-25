@@ -10,6 +10,7 @@ dash-renderer = "==0.10.0"
 dash-html-components = "==0.7.0"
 dash-core-components = "==0.12.6"
 plotly = "*"
+pandas = "*"
 
 
 [dev-packages]
