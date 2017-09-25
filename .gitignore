@@ -5,3 +5,4 @@ include/
 *.lock
 ve/
 pip-selfcheck.json
+.idea/
