@@ -1,3 +1,4 @@
+# This is a test for git
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -40,7 +41,7 @@ graph = dcc.Graph(
                         'size': 15,
                         'line': {'width': 0.5, 'color': 'white'}
                     },
-                    name=i
+                    name = i
                 ) for i in gdp_life_exp_data.continent.unique()
             ],
             'layout': go.Layout(
