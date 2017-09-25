@@ -4,5 +4,6 @@ bin/
 include/
 *.lock
 ve/
+pip-selfcheck.json
 .idea/
-
+data/cover-output-1506343018603.csv
