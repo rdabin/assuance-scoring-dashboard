@@ -1,3 +1,4 @@
+# This is a test for git
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -6,7 +7,7 @@ import pandas as pd
 
 app = dash.Dash()
 
-agricultural_data = pd.read_csv('usa-agricultural-exports-2011.csv')
+agricultural_data = pd.read_csv('data/usa-agricultural-exports-2011.csv')
 
 def generate_table(dataframe, max_rows=10):
     return html.Table(
@@ -25,7 +26,7 @@ table = html.Div(children=[
     generate_table(agricultural_data)
 ])
 
-gdp_life_exp_data = pd.read_csv('gdp-life-exp-2007.csv')
+gdp_life_exp_data = pd.read_csv('data/gdp-life-exp-2007.csv')
 graph = dcc.Graph(
         id='life-exp-vs-gdp',
         figure={
@@ -40,7 +41,7 @@ graph = dcc.Graph(
                         'size': 15,
                         'line': {'width': 0.5, 'color': 'white'}
                     },
-                    name=i
+                    name = i
                 ) for i in gdp_life_exp_data.continent.unique()
             ],
             'layout': go.Layout(
