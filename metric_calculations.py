@@ -24,7 +24,7 @@ def build_roc_data(df):
         FPR = FP / (FP + TN)
         roc_list.append([threshold, TPR, FPR])
         roc_df = pd.DataFrame(roc_list, columns=['threshold', 'TPR', 'FPR'])
-        roc_df.sort_values(by='threshold')
+        roc_df.sort_values(by='threshold', inplace=True)
     return roc_df
 
 # Calculates the elements of the confusion matrix
