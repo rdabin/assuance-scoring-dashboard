@@ -13,20 +13,23 @@ import numpy as np
 # Calculates the true positive rate and false positive rate
 # for each unique score in the input dataframe
 # df: a dataframe with columns 'class' and 'score'
-# returns roc_df, a dataframe with columns 'threshold', 'TPR', 'FPR'
-def build_roc_data(df):
+# fp_cost: a numeric value for the cost of a single false positive
+# fn_cost: a numeric value for the cost of a single false negative
+# returns roc_df, a dataframe with columns 'threshold', 'TPR', 'FPR', 'cost'
+def build_roc_data(df, fp_cost=1, fn_cost=1):
     roc_list = []
     # Use the unique list of scores as a set of thresholds
     threshold_set = set(df['score'])
     # Make sure that we include 0 and 1
     threshold_set.update([0, 1])
     for threshold in threshold_set:
-        TP, FP, TN, FN = confusion_matrix(df, threshold)
-        TPR = TP / (TP + FN)
-        FPR = FP / (FP + TN)
-        roc_list.append([threshold, TPR, FPR])
-        roc_df = pd.DataFrame(roc_list, columns=['threshold', 'TPR', 'FPR'])
-        roc_df.sort_values(by='threshold', inplace=True)
+        tp, fp, tn, fn = confusion_matrix(df, threshold)
+        cost = (fp * fp_cost) + (fn * fn_cost)
+        tpr = tp / (tp + fn)
+        fpr = fp / (fp + tn)
+        roc_list.append([threshold, tpr, fpr, cost])
+    roc_df = pd.DataFrame(roc_list, columns=['threshold', 'TPR', 'FPR', 'cost'])
+    roc_df.sort_values(by='threshold', inplace=True)
     return roc_df
 
 
@@ -34,15 +37,16 @@ def build_roc_data(df):
 # for each unique score in the input dataframe
 # df: a dataframe with columns 'class' and 'score'
 # returns roc_df, a dataframe with columns 'threshold', 'TPR', 'FPR'
-def build_roc_data_intervals(df, threshold_set=np.arange(0, 1, .01)):
+def build_roc_data_intervals(df, threshold_set=np.arange(0, 1, .01), fp_cost=1, fn_cost=1):
     roc_list = []
     for threshold in threshold_set:
-        TP, FP, TN, FN = confusion_matrix(df, threshold)
-        TPR = TP / (TP + FN)
-        FPR = FP / (FP + TN)
-        roc_list.append([threshold, TPR, FPR])
-        roc_df = pd.DataFrame(roc_list, columns=['threshold', 'TPR', 'FPR'])
-        roc_df.sort_values(by='threshold', inplace=True)
+        tp, fp, tn, fn = confusion_matrix(df, threshold)
+        cost = (fp * fp_cost) + (fn * fn_cost)
+        tpr = tp / (tp + fn)
+        fpr = fp / (fp + tn)
+        roc_list.append([threshold, tpr, fpr, cost])
+    roc_df = pd.DataFrame(roc_list, columns=['threshold', 'TPR', 'FPR', 'cost'])
+    roc_df.sort_values(by='threshold', inplace=True)
     return roc_df
 
 
@@ -58,12 +62,12 @@ def confusion_matrix(df, threshold):
     negative_df = df[df['score'] < threshold]
 
     # True positives have been scored positive and really are positive
-    TP_count = positive_df[positive_df['class'] == 1].shape[0]
+    tp_count = positive_df[positive_df['class'] == 1].shape[0]
     # False positive have been scored positive but aren't really 
-    FP_count = positive_df[positive_df['class'] == 0].shape[0]
+    fp_count = positive_df[positive_df['class'] == 0].shape[0]
     # True negatives have been scored negative and really are negative
-    TN_count = negative_df[negative_df['class'] == 0].shape[0]
+    tn_count = negative_df[negative_df['class'] == 0].shape[0]
     # False negatives have been scored negative but aren't really
-    FN_count = negative_df[negative_df['class'] == 1].shape[0]
+    fn_count = negative_df[negative_df['class'] == 1].shape[0]
 
-    return TP_count, FP_count, TN_count, FN_count
+    return tp_count, fp_count, tn_count, fn_count
