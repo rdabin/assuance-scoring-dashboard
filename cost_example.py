@@ -24,11 +24,18 @@ df = bd.create_sample_df()
 
 app = dash.Dash()
 
-slider = dcc.Slider(id='slider', value=0.5, min=0, max=1, step=0.05,
+slider = dcc.Slider(id='slider', min=0, max=1, step=0.05,
            marks={0: '0', 0.5: '0.5', 1: '1'})
 
-input_cost_ratio = dcc.Input(
-        id='input_cost_ratio',
+fp_cost = dcc.Input(
+        id='fp_cost',
+        placeholder='Enter a value...',
+        type='number',
+        value=1
+        )
+
+fn_cost = dcc.Input(
+        id='fn_cost',
         placeholder='Enter a value...',
         type='number',
         value=1
@@ -37,20 +44,29 @@ input_cost_ratio = dcc.Input(
 goto_cost_minimum = html.Button('Submit', id='goto_cost_minimum')
 
 cost_instructions = html.Div(id='cost_instructions',
-             children='Enter a cost ratio (' + FP_TEXT + ' cost/' + FN_TEXT
-             + ' cost) and press submit')
+             children='Enter a cost for each ' + FP_TEXT + ' and each ' + FN_TEXT
+             + ' and press submit')
 
-app.layout = html.Div([input_cost_ratio,
+app.layout = html.Div([fp_cost,
+                       fn_cost,
                        goto_cost_minimum,
                        cost_instructions,
                        slider])
 
 @app.callback(Output('slider', 'value'),
               [Input('goto_cost_minimum', 'n_clicks')],
-              [State('input_cost_ratio', 'value')]
+              [State('fp_cost', 'value'),
+               State('fn_cost', 'value')]
               )
-def make_pie_figure(n_clicks, cost_ratio):
-    return cost_ratio
+def find_cost_minimum(n_clicks, fp_cost, fn_cost):
+    
+    roc_df = mc.build_roc_data(df, fp_cost, fn_cost)
+    min_cost = roc_df['cost'].min()
+    # If the minimum cost occurs and several different thresholds,
+    # we'll take the first one
+    min_cost_threshold = roc_df[roc_df['cost']==min_cost]['threshold'].iloc[0]
+    
+    return min_cost_threshold
 
 
 if __name__ == '__main__':
