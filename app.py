@@ -6,7 +6,7 @@ import pandas as pd
 import os.path
 from src.graph import graph
 from src.table import table
-import metric_calculations as mc
+from src.metrics_calculator import metric_calculations as mc
 from src.data_builder import data_builder
 from src.callback_manager import callback_manager
 
