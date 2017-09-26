@@ -1,54 +1,35 @@
-# This is a test for git
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
-
 import plotly.graph_objs as go
 import pandas as pd
 import os.path
-
-from graph import graph
-from table import table
-
+from src.graph import graph
+from src.table import table
 import metric_calculations as mc
-import build_data
+from src.data_builder import data_builder
+from src.callback_manager import callback_manager
 
 
 app = dash.Dash()
-
 #TODO: spike offline static content (css, js, images)
 # app.css.config.serve_locally = True
 # app.scripts.config.serve_locally = True
 app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
 
 
+### GET DATA 
 # Load data
 datafile = 'data/data.csv'
 if not os.path.isfile(datafile):
-    build_data.create_sample_datafile(num_records=1000, filename=datafile)
+    data_builder.create_sample_datafile(num_records=1000, filename=datafile)
 raw_data = pd.read_csv(datafile)
 
 # calculate roc data
 roc_data = mc.build_roc_data(raw_data)
 
-#################
-# example modules
 
-#app = dash.Dash()
-
-#agricultural_data = pd.read_csv('data/usa-agricultural-exports-2011.csv')
-#table = table.get_table(agricultural_data)
-
-#gdp_life_exp_data = pd.read_csv('data/gdp-life-exp-2007.csv')
-#graph = graph.get_graph(gdp_life_exp_data)
-
-#app.layout = html.Div([
-#    graph,
-#    table
-#])
-################
-
+### BUILD GRAPHS ETC
 data_table = html.Div(children=[
     table.generate_table(roc_data)
 ])
@@ -68,7 +49,6 @@ slider = html.Div([
     style={'width': '48%', 'display': 'inline-block'}
 )
 
-
 tags = dcc.Dropdown(
     options=[{'label': c, 'value': c} for c in raw_data.columns],
     value=['score', 'class'],
@@ -76,6 +56,7 @@ tags = dcc.Dropdown(
 )
 
 
+### SET LAYOUT
 app.layout = html.Div([
     html.H4(children='HODAC Threshold Explorer'),
     slider,
@@ -87,13 +68,8 @@ app.layout = html.Div([
 ])
 
 
-@app.callback(
-    Output(component_id='threshold', component_property='children'),
-    [Input(component_id='slider', component_property='value')]
-)
-def update_text(input_value):
-    return 'Threshold: "{}"'.format(input_value)
-
+### REGISTER CONTROLLER CALLBACKS
+callback_manager.register_callbacks(app)
 
 if __name__ == '__main__':
     app.run_server()
