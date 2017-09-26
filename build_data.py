@@ -33,10 +33,10 @@ def create_sample_df(num_records=1000):
 
     # Dummy scores sampled from Beta distributions, with different alpha/beta params for each group (dim 0) and
     # true classification (dim 1)
-    score_alpha = np.array([[5, 2],
-                            [4, 1]])
-    score_beta = np.array([[1, 5],
-                           [1.5, 3]])
+    score_alpha = np.array([[2, 5],
+                            [1, 4]])
+    score_beta = np.array([[5, 1],
+                           [3, 1.5]])
     assert score_alpha.shape == score_beta.shape == (num_groups, 2)
 
     # randomly sample each record from one of the subgroups
