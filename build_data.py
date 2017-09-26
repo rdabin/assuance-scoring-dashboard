@@ -2,35 +2,41 @@ import pandas as pd
 import numpy as np
 
 
+datafolder = 'data/'
+
+
+def create_sample_datafile(num_records=1000, filename='data.csv'):
+    df = create_sample_df(num_records)
+    df.to_csv(datafolder+filename, index_label='id')
+
+
 def create_sample_df(num_records=1000):
     """
     Create a sample testdataset mimicking output from a binary classifier.
     Assumes presence of multiple subgroups within dataset each of which may see a different distribution of scores
     for both class 0 and class 1.
     :param num_records: number of fake records to generate in dummy test dataset
-    :return: a dataframe with columns ['group', 'classification', 'score'
+    :return: a dataframe with columns ['id', 'group', 'classification', 'score']
     """
 
     np.random.seed(24)
 
     # Setting parameters for each subgroup in population.
-    num_groups = 3
+    num_groups = 2
 
-    prevalance_of_subgroup_in_population = [.3, .3, .4]
+    prevalance_of_subgroup_in_population = [.7, .3]
     assert len(prevalance_of_subgroup_in_population) == num_groups
     assert sum(prevalance_of_subgroup_in_population) == 1
 
-    probability_of_class_1 = [.5, .3, .1]
+    probability_of_class_1 = [.5, .2]
     assert len(probability_of_class_1) == num_groups
 
     # Dummy scores sampled from Beta distributions, with different alpha/beta params for each group (dim 0) and
     # true classification (dim 1)
-    score_alpha = np.array([[2, 6],
-                            [3, 2],
-                            [1, 1]])
-    score_beta = np.array([[6, 2],
-                           [2, 3],
-                           [.5, 1]])
+    score_alpha = np.array([[5, 2],
+                            [4, 1]])
+    score_beta = np.array([[1, 5],
+                           [1.5, 3]])
     assert score_alpha.shape == score_beta.shape == (num_groups, 2)
 
     # randomly sample each record from one of the subgroups
@@ -59,4 +65,5 @@ def create_sample_df(num_records=1000):
     return df
 
 if __name__ == '__main__':
+    create_sample_datafile()
     print(create_sample_df())
