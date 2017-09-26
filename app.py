@@ -76,6 +76,72 @@ tags = dcc.Dropdown(
 )
 
 
+TP_COLOUR = '#e03344'
+FP_COLOUR = '#ef7b28'
+TN_COLOUR = '#09ef33'
+FN_COLOUR = '#aabf22'
+
+TP_TEXT = 'hit'
+FP_TEXT = 'false alarm'
+TN_TEXT = 'meh'
+FN_TEXT = 'miss'
+
+
+def generate_bar_of_dots(c1=100, c2=16, width=15):
+    return pd.DataFrame([
+        {
+            'type': 0 if i < c1 else 1,
+            'x': i % width,
+            'y': i // width,
+        } for i in range(0, c1 + c2 - 1)
+    ])
+dots = generate_bar_of_dots()
+
+volume = html.Div([
+    dcc.Graph(
+        id='volume1',
+        figure={
+            'data': [
+                go.Scatter(
+                    x=dots[dots['type'] == i]['x'],
+                    y=dots[dots['type'] == i]['y'],
+                    text='foo',
+                    mode='markers',
+                    opacity=0.7,
+                    marker={
+                        'size': 10,
+                        'line': {'width': 0.5, 'color': 'white'}
+                    },
+                    name=i
+                ) for i in dots['type'].unique()
+            ],
+            'layout': go.Layout(
+                width=315,
+                height=300,
+                showlegend=False,
+                xaxis=dict(
+                    autorange=True,
+                    showgrid=False,
+                    zeroline=False,
+                    showline=False,
+                    autotick=True,
+                    ticks='',
+                    showticklabels=False
+                ),
+                yaxis=dict(
+                    autorange=True,
+                    showgrid=False,
+                    zeroline=False,
+                    showline=False,
+                    autotick=True,
+                    ticks='',
+                    showticklabels=False
+                )
+            )
+        }
+    )],
+    style={'width': '20%', 'display': 'inline-block'})
+
 app.layout = html.Div([
     html.H4(children='HODAC Threshold Explorer'),
     slider,
@@ -83,6 +149,7 @@ app.layout = html.Div([
     html.Div(id='threshold'),
     tags,
     roc_graph,
+    volume,
     data_table,
 ])
 
