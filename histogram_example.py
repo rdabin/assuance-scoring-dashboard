@@ -10,6 +10,10 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
+import build_data as bd
+import metric_calculations as mc
+
+df = bd.create_sample_df()
 
 app = dash.Dash()
 
@@ -24,12 +28,15 @@ app.layout = html.Div([dcc.Graph(id='example_graph'),
 @app.callback(Output('example_graph', 'figure'),
               [Input('slider', 'value')])
 def make_pie_figure(slider):
+
+    TP, FP, TN, FN = mc.confusion_matrix(df, slider)
+
     figure = go.Figure(
         data=[
             go.Bar(
-                x=['This one', 'That one'],
-                y=[slider, 1 - slider],
-                name='My Pie Chart',
+                x=['TP', 'FP', 'TN', 'FN'],
+                y=[TP, FP, TN, FN],
+                name='My Bar Chart'
             )
         ]
     )
