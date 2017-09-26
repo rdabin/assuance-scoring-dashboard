@@ -6,15 +6,22 @@ from dash.dependencies import Input, Output
 
 import plotly.graph_objs as go
 import pandas as pd
+import os.path
 
 import metric_calculations as mc
 import build_data
 
 app = dash.Dash()
 
-# raw_data = pd.read_csv('data/cover-output-1506343018603.csv')
-raw_data = build_data.create_sample_df(1000)
+# Load data
+datafile = 'data/data.csv'
+if not os.path.isfile(datafile):
+    build_data.create_sample_datafile(num_records=1000, filename=datafile)
+raw_data = pd.read_csv(datafile)
+
+# calculate roc data
 roc_data = mc.build_roc_data(raw_data)
+
 
 def generate_table(dataframe, max_rows=10):
     return html.Table(
