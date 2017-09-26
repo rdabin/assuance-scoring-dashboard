@@ -2,12 +2,9 @@ import pandas as pd
 import numpy as np
 
 
-datafolder = 'data/'
-
-
-def create_sample_datafile(num_records=1000, filename='data.csv'):
+def create_sample_datafile(num_records=1000, filename='data/data.csv'):
     df = create_sample_df(num_records)
-    df.to_csv(datafolder+filename, index_label='id')
+    df.to_csv(filename, index_label='id')
 
 
 def create_sample_df(num_records=1000):
