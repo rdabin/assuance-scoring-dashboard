@@ -100,6 +100,9 @@ dots = generate_bar_of_dots()
 volume = html.Div([
     dcc.Graph(
         id='volume1',
+        config={
+        'displayModeBar': False
+        },
         figure={
             'data': [
                 go.Scatter(
@@ -129,7 +132,7 @@ volume = html.Div([
                     showticklabels=False
                 ),
                 yaxis=dict(
-                    autorange=True,
+                    autorange='reversed',
                     showgrid=False,
                     zeroline=False,
                     showline=False,
