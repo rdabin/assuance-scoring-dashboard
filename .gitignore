@@ -8,4 +8,5 @@ pip-selfcheck.json
 .idea/
 data/cover-output-1506343018603.csv
 __pycache__/
-data/cover-output-1506343018603.csv
+data/*
+
