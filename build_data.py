@@ -11,6 +11,8 @@ def create_sample_data(num_records=1000):
     :return: a dataframe with columns ['group', 'classification', 'score'
     """
 
+    np.random.seed(24)
+
     # Setting parameters for each subgroup in population.
     num_groups = 3
 
