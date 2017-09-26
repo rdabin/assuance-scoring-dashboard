@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 
-def create_sample_data(num_records=1000):
+def create_sample_df(num_records=1000):
     """
     Create a sample testdataset mimicking output from a binary classifier.
     Assumes presence of multiple subgroups within dataset each of which may see a different distribution of scores
@@ -53,10 +53,10 @@ def create_sample_data(num_records=1000):
     assert classification.shape == (num_records,)
 
     df = pd.DataFrame({'group': group_index,
-                       'classification': classification,
+                       'class': classification,
                        'score': score})
 
     return df
 
 if __name__ == '__main__':
-    print(create_sample_data())
+    print(create_sample_df())
