@@ -8,8 +8,12 @@ import plotly.graph_objs as go
 import pandas as pd
 import os.path
 
+from graph import graph
+from table import table
+
 import metric_calculations as mc
 import build_data
+
 
 app = dash.Dash()
 
@@ -22,22 +26,26 @@ raw_data = pd.read_csv(datafile)
 # calculate roc data
 roc_data = mc.build_roc_data(raw_data)
 
+#################
+# example modules
 
-def generate_table(dataframe, max_rows=10):
-    return html.Table(
-        # Header
-        [html.Tr([html.Th(col) for col in dataframe.columns])] +
+#app = dash.Dash()
 
-        # Body
-        [html.Tr([
-            html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
-        ]) for i in range(min(len(dataframe), max_rows))]
-    )
+#agricultural_data = pd.read_csv('data/usa-agricultural-exports-2011.csv')
+#table = table.get_table(agricultural_data)
 
+#gdp_life_exp_data = pd.read_csv('data/gdp-life-exp-2007.csv')
+#graph = graph.get_graph(gdp_life_exp_data)
+
+#app.layout = html.Div([
+#    graph,
+#    table
+#])
+################
 
 table = html.Div(children=[
     html.H4(children='Assurance Scoring Threshold Explorer'),
-    generate_table(roc_data)
+    table.generate_table(roc_data)
 ])
 
 
@@ -100,8 +108,6 @@ app.layout = html.Div([
 )
 def update_text(input_value):
     return 'Threshold: "{}"'.format(input_value)
-
-
 
 
 if __name__ == '__main__':
