@@ -56,15 +56,15 @@ def update_histogram(threshold):
                 opacity=0.7,
                 
                 marker={
-                    'size': 15,
+                    'size': 10,
                     'color' : colors_exp,
                     'line': {'width': 0.5, 'color': 'white'}
                 },
             )
         ],
         'layout': go.Layout(
-            width = 700,
-            height = 400,
+            width = 600,
+            height = 300,
             xaxis={'type': 'linear', 'title': 'Threshold'},
             yaxis={'title': 'Counts'},
             margin={'l': 40, 'b': 40, 't': 10, 'r': 10},

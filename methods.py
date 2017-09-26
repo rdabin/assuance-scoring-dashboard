@@ -32,13 +32,13 @@ def bar_coordinates(hista, threshold, binsa,  resolution, acc,
 
 	for value, x in zip(hista,binsa[1:]):
 		no_points = int(value //10  +1) * resolution
-		y_points = np.arange(0,value,value/no_points)
-		x_points = (x-step)*np.ones(no_points)
+		y_points = np.arange(0,value,value/no_points)+ 1
+		x_points = (x-step/2)*np.ones(no_points)
 		class_0 =  int(round(no_points*target_hist[cnt]))
 		class_1 = no_points - class_0
 		# create the colors based on the thresold
 		print(x)
-		if x > threshold:
+		if x >=threshold:
 			print('color1')
 			colors1 = [[FP_COLOUR for c in range(class_0)], [TP_COLOUR for c in range(class_1)]]
 		else:
