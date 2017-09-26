@@ -49,6 +49,28 @@ def build_roc_data_intervals(df, threshold_set=np.arange(0, 1, .01), fp_cost=1, 
     roc_df.sort_values(by='threshold', inplace=True)
     return roc_df
 
+def build_roc_data_fast(df_input, fp_cost=1, fn_cost=1):
+    
+    df = df_input[['score', 'class']].copy()
+    df.columns = ['threshold', 'class']
+    df['not_class'] = 1 - df['class']
+    
+    df = df.groupby(['threshold']).sum().reset_index(False)
+    df.sort_values(by='threshold', ascending=True, inplace=True)    
+    
+    p_count = df['class'].sum()
+    n_count = df['not_class'].sum()
+    
+    df['FN'] = df['class'].cumsum() - df['class']
+    df['TN'] = df['not_class'].cumsum() - df['not_class']
+    df['TP'] = p_count - df['FN']
+    df['FP'] = n_count - df['TN']    
+
+    df['TPR'] = df['TP'] / (df['TP'] + df['FN'])
+    df['FPR'] = df['FP'] / (df['FP'] + df['TN'])
+    df['cost'] = df['FP'] * fp_cost + df['FN'] * fn_cost
+    
+    return df[['threshold', 'TP', 'FN', 'TN', 'FP', 'TPR', 'FPR', 'cost']]
 
 # Calculates the elements of the confusion matrix
 # df: a dataframe with columns 'class' and 'score'
