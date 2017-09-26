@@ -8,10 +8,12 @@ import plotly.graph_objs as go
 import pandas as pd
 
 import metric_calculations as mc
+import build_data
 
 app = dash.Dash()
 
-raw_data = pd.read_csv('data/cover-output-1506343018603.csv')
+# raw_data = pd.read_csv('data/cover-output-1506343018603.csv')
+raw_data = build_data.create_sample_df(1000)
 roc_data = mc.build_roc_data(raw_data)
 
 def generate_table(dataframe, max_rows=10):
