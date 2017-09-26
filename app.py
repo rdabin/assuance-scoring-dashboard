@@ -17,6 +17,12 @@ import build_data
 
 app = dash.Dash()
 
+#TODO: spike offline static content (css, js, images)
+# app.css.config.serve_locally = True
+# app.scripts.config.serve_locally = True
+app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
+
+
 # Load data
 datafile = 'data/data.csv'
 if not os.path.isfile(datafile):
@@ -44,45 +50,51 @@ roc_data = mc.build_roc_data(raw_data)
 ################
 
 table = html.Div(children=[
-    html.H4(children='Assurance Scoring Threshold Explorer'),
     table.generate_table(roc_data)
 ])
 
 
-graph = dcc.Graph(
-    id='roc-curve',
-    figure={
-        'data': [
-            go.Scatter(
-                x=roc_data['FPR'],
-                y=roc_data['TPR'],
-                text='hello world',
-                mode='lines+markers',
-                opacity=0.7,
-                marker={
-                    'size': 5,
-                    'line': {'width': 0.5, 'color': 'white'}
-                },
-            )
-        ],
-        'layout': go.Layout(
-            xaxis={'type': 'linear', 'title': 'FPR'},
-            yaxis={'title': 'TPR'},
-            margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
-            legend={'x': 0, 'y': 1},
-            hovermode='closest'
+graph = html.Div([
+        dcc.Graph(
+            id='roc-curve',
+            figure={
+                'data': [
+                    go.Scatter(
+                        x=roc_data['FPR'],
+                        y=roc_data['TPR'],
+                        text='hello world',
+                        mode='lines+markers',
+                        opacity=0.7,
+                        marker={
+                            'size': 5,
+                            'line': {'width': 0.5, 'color': 'white'}
+                        },
+                    )
+                ],
+                'layout': go.Layout(
+                    xaxis={'type': 'linear', 'title': 'FPR'},
+                    yaxis={'title': 'TPR'},
+                    margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+                    legend={'x': 0, 'y': 1},
+                    hovermode='closest'
+                )
+            }
         )
-    }
+    ],
+    style={'width': '48%', 'display': 'inline-block'}
 )
 
 
-slider = dcc.Slider(
-    id='slider',
-    value=0.5,
-    min=0.0,
-    max=1.0,
-    step=0.01,
-    marks={i/10: '{}'.format(i/10) for i in range(0, 10)}
+slider = html.Div([
+    dcc.Slider(
+        id='slider',
+        value=0.5,
+        min=0.0,
+        max=1.0,
+        step=0.01,
+        marks={i/10: '{}'.format(i/10) for i in range(0, 10)}
+    )],
+    style={'width': '48%', 'display': 'inline-block'}
 )
 
 
@@ -94,11 +106,13 @@ tags = dcc.Dropdown(
 
 
 app.layout = html.Div([
+    html.H4(children='HODAC Threshold Explorer'),
+    slider,
+    html.Label(children='Threshold:'),
+    html.Div(id='threshold'),
     tags,
     graph,
     table,
-    slider,
-    html.Div(id='threshold'),
 ])
 
 
