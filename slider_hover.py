@@ -30,6 +30,10 @@ FP_COLOUR = '#ef7b28'
 TN_COLOUR = '#09ef33'
 FN_COLOUR = '#aabf22'
 
+# Get the dictionary of histogram data points
+hist_dict, bins_dict, colors_dict =  mt.histogram_data_dict(raw_data, resolution, bins1,
+        TP_COLOUR = TP_COLOUR, FP_COLOUR = FP_COLOUR, TN_COLOUR = TN_COLOUR, FN_COLOUR = FN_COLOUR)
+
 app = dash.Dash()
 
 app.layout = html.Div([
@@ -45,17 +49,32 @@ app.layout = html.Div([
     
 ])
 
+# @app.callback(
+#     dash.dependencies.Output('hist_with_slider', 'figure'),
+#     [dash.dependencies.Input('th_slider', 'value')])
+
+
 @app.callback(
     dash.dependencies.Output('hist_with_slider', 'figure'),
-    [dash.dependencies.Input('th_slider', 'value')])
-
-def update_histogram(threshold):
+    #[Input(component_id='th_slider', component_property='value')]
+    #[Input(component_id='hist_with_slider', component_property='hoverData')]
+    [dash.dependencies.Input('hist_with_slider', 'hoverData')]
+)
+def update_histogram_hover(input_value):
     """
     Update histogram coloring according to slider threshold
 
-    """
-    hist_exp, bins_exp, colors_exp = mt.histogram_data(raw_data, threshold, resolution, bins1,
-        TP_COLOUR = TP_COLOUR, FP_COLOUR = FP_COLOUR, TN_COLOUR = TN_COLOUR, FN_COLOUR = FN_COLOUR)
+    """    
+    if input_value is None:
+        threshold = 0.5
+    else:
+        hover_data = input_value['points'][0]
+        threshold = hover_data['x']
+
+    hist_exp =  hist_dict[threshold] 
+    bins_exp =  bins_dict[threshold] 
+    colors_exp = colors_dict[threshold] 
+
     figure={
         'data': [
             go.Scatter(
@@ -83,25 +102,6 @@ def update_histogram(threshold):
         )
     }
     return figure
-
-
-@app.callback(
-    Output(component_id='threshold', component_property='children'),
-    #[Input(component_id='th_slider', component_property='value')]
-    [Input(component_id='hist_with_slider', component_property='hoverData')]
-)
-def update_text_graph(input_value):
-    hover_data = input_value['points'][0]
-    print(hover_data)
-    print(type(hover_data))
-    for key in hover_data.keys():
-        print(key)
-    threshold = hover_data['x']
-    print(threshold)
-    return 'Threshold: "{}"'.format(threshold)
-
-
-
 
 if __name__ == '__main__':
     app.run_server()
