@@ -14,7 +14,7 @@ import build_data as bd
 
 app = dash.Dash()
 
-raw_data = pd.read_csv('data/cover-output-1506343018603.csv')
+# raw_data = pd.read_csv('data/cover-output-1506343018603.csv')
 raw_data = bd.create_sample_df()
 roc_data = mc.build_roc_data(raw_data)
 

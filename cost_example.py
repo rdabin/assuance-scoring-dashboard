@@ -60,7 +60,7 @@ app.layout = html.Div([fp_cost,
               )
 def find_cost_minimum(n_clicks, fp_cost, fn_cost):
     
-    roc_df = mc.build_roc_data(df, fp_cost, fn_cost)
+    roc_df = mc.build_roc_data_fast(df, float(fp_cost), float(fn_cost))
     min_cost = roc_df['cost'].min()
     # If the minimum cost occurs at several different thresholds, take the first one
     min_cost_threshold = roc_df[roc_df['cost']==min_cost]['threshold'].iloc[0]

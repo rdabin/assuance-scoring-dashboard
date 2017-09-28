@@ -24,13 +24,16 @@ app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"
 
 
 # Load data
-datafile = 'data/data.csv'
-if not os.path.isfile(datafile):
-    build_data.create_sample_datafile(num_records=1000, filename=datafile)
-raw_data = pd.read_csv(datafile)
+# datafile = 'data/data.csv'
+# if not os.path.isfile(datafile):
+#     raw_data = build_data.create_sample_datafile(num_records=1000, datafile)
+# else:
+#     raw_data = pd.read_csv(datafile)
+raw_data = build_data.create_sample_df()
+
 
 # calculate roc data
-roc_data = mc.build_roc_data(raw_data)
+roc_data = mc.build_roc_data_fast(raw_data)
 
 #################
 # example modules
@@ -55,6 +58,8 @@ data_table = html.Div(children=[
 
 
 roc_graph = graph.get_graph(roc_data)
+
+cost_graph = graph.get_cost_graph(roc_data)
 
 slider = html.Div([
     dcc.Slider(
@@ -151,6 +156,7 @@ app.layout = html.Div([
     html.Label(children='Threshold:'),
     html.Div(id='threshold'),
     tags,
+	cost_graph,
     roc_graph,
     volume,
     data_table,
