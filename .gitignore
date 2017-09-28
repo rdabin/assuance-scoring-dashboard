@@ -3,10 +3,16 @@ lib/
 bin/
 include/
 *.lock
-ve/
 pip-selfcheck.json
-.idea/
-data/cover-output-1506343018603.csv
-__pycache__/
-data/*
 
+.idea/
+*__pycache__*
+*.DS_Store
+
+
+#Data
+data/
+!data/.gitkeep
+
+#VirtualEnvironment
+ve/
