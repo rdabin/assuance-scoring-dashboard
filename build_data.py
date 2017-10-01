@@ -18,7 +18,7 @@ def create_sample_df(num_records=1000):
 
     np.random.seed(24)
 
-    # Setting parameters for each subgroup in population.
+    # Setting parameters for each group in population.
     num_groups = 2
 
     prevalance_of_subgroup_in_population = [.7, .3]
@@ -30,13 +30,13 @@ def create_sample_df(num_records=1000):
 
     # Dummy scores sampled from Beta distributions, with different alpha/beta params for each group (dim 0) and
     # true classification (dim 1)
-    score_alpha = np.array([[2, 5],
-                            [1, 4]])
+    score_alpha = np.array([[2, 3],
+                            [1, 2]])
     score_beta = np.array([[5, 1],
                            [3, 1.5]])
     assert score_alpha.shape == score_beta.shape == (num_groups, 2)
 
-    # randomly sample each record from one of the subgroups
+    # randomly sample each record from one of the groups
     prevalance_cumsum = np.cumsum(prevalance_of_subgroup_in_population)
     group_index = np.digitize(np.random.uniform(0, 1, size=num_records), prevalance_cumsum)
     assert group_index.shape == (num_records,)
@@ -44,14 +44,12 @@ def create_sample_df(num_records=1000):
     # choose random classification according to selected group
     classification_array = (np.random.uniform(0, 1, size=(num_records, num_groups)) < probability_of_class_1) * 1
     assert classification_array.shape == (num_records, num_groups)
-
     classification = classification_array[range(num_records), group_index]
     assert classification.shape == (num_records,)
 
     # choose random score according to selected group and true classification
     score_array = np.random.beta(score_alpha, score_beta, [num_records, num_groups, 2])
     assert score_array.shape == (num_records, num_groups, 2)
-
     score = score_array[range(num_records), group_index, classification]
     assert classification.shape == (num_records,)
 
@@ -60,6 +58,7 @@ def create_sample_df(num_records=1000):
                        'score': score})
 
     return df
+
 
 if __name__ == '__main__':
     create_sample_datafile()
