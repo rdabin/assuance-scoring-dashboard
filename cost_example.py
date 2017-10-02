@@ -9,6 +9,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import build_data as bd
 import metric_calculations as mc
+from graph import graph
 
 TP_COLOUR = '#e03344'
 FP_COLOUR = '#ef7b28'
@@ -47,11 +48,14 @@ cost_instructions = html.Div(id='cost_instructions',
              children='Enter a cost for each ' + FP_TEXT + ' and each ' + FN_TEXT
              + ' and press submit')
 
+cost_graph = graph.get_cost_graph_2()
+			 
 app.layout = html.Div([fp_cost,
                        fn_cost,
                        goto_cost_minimum,
                        cost_instructions,
-                       slider])
+                       slider,
+					   cost_graph])
 
 @app.callback(Output('slider', 'value'),
               [Input('goto_cost_minimum', 'n_clicks')],
@@ -67,6 +71,7 @@ def find_cost_minimum(n_clicks, fp_cost, fn_cost):
     
     return min_cost_threshold
 
-
+graph.set_cost_callback(app, df)
+	
 if __name__ == '__main__':
     app.run_server()
