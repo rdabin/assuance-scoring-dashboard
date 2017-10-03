@@ -52,6 +52,12 @@ raw_data = bd.create_sample_df()
 roc_data = mc.build_roc_data(raw_data)
 
 
+# Get the dictionary of histogram data points
+hist_ext, bins_ext, colors_dict =  mt.histogram_data_dict(raw_data, resolution, bins1,
+        TP_COLOUR=TP_COLOUR, FP_COLOUR=FP_COLOUR, TN_COLOUR=TN_COLOUR, FN_COLOUR=FN_COLOUR)
+
+
+
 # create graph divs
 
 slider = html.Div([
@@ -60,7 +66,7 @@ slider = html.Div([
         value=0.5,
         min=0.0,
         max=1.0,
-        step=0.01,
+        step=step,      #0.01,
         updatemode='drag',
         # vertical=True,
         # marks={i / 10.0: '{}'.format(i / 10.0) for i in range(0, 11)},
@@ -329,13 +335,13 @@ def update_histogram(threshold):
     Update histogram coloring according to slider threshold
 
     """
-    hist_exp, bins_exp, colors_exp = mt.histogram_data(raw_data, threshold, resolution, bins1,
-        TP_COLOUR = TP_COLOUR, FP_COLOUR = FP_COLOUR, TN_COLOUR = TN_COLOUR, FN_COLOUR = FN_COLOUR)
+    colors_exp = colors_dict[threshold]
+
     figure = {
         'data': [
             go.Scatter(
-                x=bins_exp,
-                y=hist_exp,
+                x=bins_ext,
+                y=hist_ext,
                 text='Histogram',
                 mode='markers',
                 # opacity=0.7,
@@ -353,7 +359,7 @@ def update_histogram(threshold):
             yaxis={'title': 'Counts'},
             margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
             legend={'x': 0, 'y': 1},
-            hovermode='closest'
+            hovermode=False
         )
     }
     return figure
