@@ -6,7 +6,7 @@ import pandas as pd
 import os.path
 from src.graph import graph
 from src.table import table
-import metric_calculations as mc
+from src.metrics_calculator import metrics_calculator
 from src.data_builder import data_builder
 from src.callback_manager import callback_manager
 
@@ -33,7 +33,7 @@ FN_TEXT = 'miss'
 raw_data = data_builder.create_sample_df()
 
 # calculate roc data
-roc_data = mc.build_roc_data(raw_data)
+roc_data = metrics_calculator.build_roc_data(raw_data)
 ###########
 
 
@@ -147,7 +147,7 @@ app.layout = html.Div([
               [Input('slider', 'value')])
 def make_pie_figure(slider):
     
-    tp, fp, tn, fn = mc.confusion_matrix(raw_data, slider)
+    tp, fp, tn, fn = metrics_calculator.confusion_matrix(raw_data, slider)
     
     data = [
         dict(
@@ -219,7 +219,7 @@ def make_pie_figure(slider):
               [Input('slider', 'value')])
 def make_histogram_figure(slider):
 
-    TP, FP, TN, FN = mc.confusion_matrix(df, slider)
+    TP, FP, TN, FN = metrics_calculator.confusion_matrix(df, slider)
 
     figure = go.Figure(
         data=[

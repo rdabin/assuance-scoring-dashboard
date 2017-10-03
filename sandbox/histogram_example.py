@@ -10,8 +10,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
-import build_data as bd
-import metric_calculations as mc
+from src.metrics_calculator import metrics_calculator as mc
+from src.data_builder import data_builder as bd
 
 df = bd.create_sample_df()
 

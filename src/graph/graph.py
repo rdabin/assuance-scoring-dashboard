@@ -4,7 +4,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
 import pandas as pd
-import metric_calculations as mc
+from ..metrics_calculator import metrics_calculator
 
 def get_graph(roc_data):
 
@@ -112,7 +112,7 @@ def set_cost_callback(app, df):
               )
     def update_cost_graph(n_clicks, fp_cost, fn_cost):
         print('df shape:', df.shape)
-        roc_df = mc.build_roc_data_fast(df, float(fp_cost), float(fn_cost))
+        roc_df = metric_calculator.build_roc_data_fast(df, float(fp_cost), float(fn_cost))
         print('roc_df shape:', roc_df.shape)
         curve = go.Scatter(
             x=roc_df['threshold'],
