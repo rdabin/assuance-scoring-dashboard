@@ -1,15 +1,16 @@
-# This is a test for git
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import pandas as pd
 import os.path
-from graph import graph
-from table import table
+from src.graph import graph
+from src.table import table
 import metric_calculations as mc
-import build_data
+from src.data_builder import data_builder
+from src.callback_manager import callback_manager
+
+from dash.dependencies import Input, Output
 
 
 TP_COLOUR = '#e03344'
@@ -29,7 +30,7 @@ FN_TEXT = 'miss'
 #     raw_data = build_data.create_sample_datafile(num_records=1000, datafile)
 # else:
 #     raw_data = pd.read_csv(datafile)
-raw_data = build_data.create_sample_df()
+raw_data = data_builder.create_sample_df()
 
 # calculate roc data
 roc_data = mc.build_roc_data(raw_data)
@@ -110,15 +111,12 @@ volume = html.Div([
     )],
     style={'width': '20%', 'display': 'inline-block'})
 
-
 pie_chart = dcc.Graph(id='pie_chart')
 
 histogram = dcc.Graph(id='histogram')
 
 cost_graph = graph.get_cost_graph(roc_data)
 ###############
-
-
 
 
 
@@ -130,6 +128,7 @@ app = dash.Dash()
 # app.scripts.config.serve_locally = True
 app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
 
+### SET LAYOUT
 app.layout = html.Div([
     html.H4(children='HODAC Threshold Explorer'),
     slider,
@@ -218,7 +217,7 @@ def make_pie_figure(slider):
 
 @app.callback(Output('histogram', 'figure'),
               [Input('slider', 'value')])
-def make_pie_figure(slider):
+def make_histogram_figure(slider):
 
     TP, FP, TN, FN = mc.confusion_matrix(df, slider)
 
@@ -233,6 +232,11 @@ def make_pie_figure(slider):
     )
 
     return figure
+
+
+
+### REGISTER CONTROLLER CALLBACKS
+#callback_manager.register_callbacks(app)
 
 
 if __name__ == '__main__':
