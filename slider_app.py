@@ -87,9 +87,12 @@ def update_histogram(threshold):
 
 @app.callback(
     Output(component_id='threshold', component_property='children'),
-    #[Input(component_id='th_slider', component_property='value')]
-    [Input(component_id='hist_with_slider', component_property='hoverData')]
+    [Input(component_id='th_slider', component_property='value')]
+    #[Input(component_id='hist_with_slider', component_property='hoverData')]
 )
+def update_text(input_value):
+    return 'Threshold: "{}"'.format(input_value)
+
 def update_text_graph(input_value):
     hover_data = input_value['points'][0]
     print(hover_data)

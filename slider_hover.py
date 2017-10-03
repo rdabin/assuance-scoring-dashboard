@@ -31,7 +31,7 @@ TN_COLOUR = '#09ef33'
 FN_COLOUR = '#aabf22'
 
 # Get the dictionary of histogram data points
-hist_dict, bins_dict, colors_dict =  mt.histogram_data_dict(raw_data, resolution, bins1,
+hist_ext, bins_ext, colors_dict =  mt.histogram_data_dict(raw_data, resolution, bins1,
         TP_COLOUR = TP_COLOUR, FP_COLOUR = FP_COLOUR, TN_COLOUR = TN_COLOUR, FN_COLOUR = FN_COLOUR)
 
 app = dash.Dash()
@@ -71,15 +71,14 @@ def update_histogram_hover(input_value):
         hover_data = input_value['points'][0]
         threshold = hover_data['x']
 
-    hist_exp =  hist_dict[threshold] 
-    bins_exp =  bins_dict[threshold] 
+    
     colors_exp = colors_dict[threshold] 
 
     figure={
         'data': [
             go.Scatter(
-                x=bins_exp,
-                y=hist_exp,
+                x=bins_ext,
+                y=hist_ext,
                 text='Histogram',
                 mode='markers',
                 opacity=0.7,

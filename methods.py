@@ -89,7 +89,8 @@ def histogram_data_dict(input_df, resolution, bins, target_col = 'class', score_
 	TP_COLOUR = '#e03344',FP_COLOUR = '#ef7b28',TN_COLOUR = '#09ef33',FN_COLOUR = '#aabf22'):
 	"""
 	Receive data frame and based on score and target data, create a dicionarly of flatten histogram 
-	for each threshold for plotting purposes
+	for each threshold for plotting purposes.
+
 
 	"""
 
@@ -103,16 +104,13 @@ def histogram_data_dict(input_df, resolution, bins, target_col = 'class', score_
 	# Get now the data to plot 
 	# -> for a bar of size 20, we want for exampole to create 8 data points, and the coloring split according 
 	#     to the known target value
-	hist_dict = dict()
-	bins_dict = dict()
+
 	colors_dict = dict()
 
 	for threshold in binsa:
 		hist_exp, bins_exp, colors_exp= bar_coordinates(hista, threshold, binsa, resolution, acc)
-		hist_dict[threshold] = hist_exp
-		bins_dict[threshold] = bins_exp
 		colors_dict[threshold] = colors_exp
 				
 
 
-	return hist_dict, bins_dict, colors_dict
+	return hist_exp, bins_exp, colors_dict
