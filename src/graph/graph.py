@@ -181,4 +181,4 @@ def set_cost_callback(app, df):
 #          )
 #      ],
 #      style={'width': '48%', 'display': 'inline-block'}
-#  ) 
+#  )
