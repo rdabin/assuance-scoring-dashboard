@@ -1,18 +1,19 @@
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
-import plotly.graph_objs as go
-import pandas as pd
-import os.path
 from src.graph import graph
 from src.table import table
 from src.metrics_calculator import metrics_calculator
 from src.data_builder import data_builder
 from src.callback_manager import callback_manager
+from src.volume_plot import volume_plot
 
-from dash.dependencies import Input, Output
+# TODO: imports to remove once refactored callbacks etc into modules
+import dash_html_components as html
+import dash_core_components as dcc
+from dash.dependencies import Input, Output, State
 
 
+# TODO: extract to config file. - json?
+############# GLOBAL CONFIG 
 TP_COLOUR = '#e03344'
 FP_COLOUR = '#ef7b28'
 TN_COLOUR = '#09ef33'
@@ -38,8 +39,9 @@ roc_data = metrics_calculator.build_roc_data(raw_data)
 ###########
 
 
-
 ########### create graph divs
+
+# TODO: create modules?
 slider = html.Div([
     dcc.Slider(
         id='slider',
@@ -51,90 +53,30 @@ slider = html.Div([
     )],
     style={'width': '48%', 'display': 'inline-block'}
 )
-
-roc_graph = graph.get_graph(roc_data)
-
-def generate_bar_of_dots(c1=100, c2=16, width=15):
-    return pd.DataFrame([
-        {
-            'type': 0 if i < c1 else 1,
-            'x': i % width,
-            'y': i // width,
-        } for i in range(0, c1 + c2 - 1)
-    ])
-dots = generate_bar_of_dots()
-
-volume = html.Div([
-    dcc.Graph(
-        id='volume1',
-        config={
-        'displayModeBar': False
-        },
-        figure={
-            'data': [
-                go.Scatter(
-                    x=dots[dots['type'] == i]['x'],
-                    y=dots[dots['type'] == i]['y'],
-                    text='foo',
-                    mode='markers',
-                    opacity=0.7,
-                    marker={
-                        'size': 10,
-                        'line': {'width': 0.5, 'color': 'white'}
-                    },
-                    name=i
-                ) for i in dots['type'].unique()
-            ],
-            'layout': go.Layout(
-                width=315,
-                height=300,
-                showlegend=False,
-                xaxis=dict(
-                    autorange=True,
-                    showgrid=False,
-                    zeroline=False,
-                    showline=False,
-                    autotick=True,
-                    ticks='',
-                    showticklabels=False
-                ),
-                yaxis=dict(
-                    autorange='reversed',
-                    showgrid=False,
-                    zeroline=False,
-                    showline=False,
-                    autotick=True,
-                    ticks='',
-                    showticklabels=False
-                )
-            )
-        }
-    )],
-    style={'width': '20%', 'display': 'inline-block'})
-
 pie_chart = dcc.Graph(id='pie_chart')
-
 histogram = dcc.Graph(id='histogram')
 
+
+
+roc_graph = graph.get_graph(roc_data)
+volume_plot = volume_plot.get_population_dots()
 cost_graph = graph.get_cost_graph(roc_data)
 ###############
 
 
 
 ######## initialise app
-app = dash.Dash()
 
 #TODO: spike offline static content (css, js, images)
 # app.css.config.serve_locally = True
 # app.scripts.config.serve_locally = True
+app = dash.Dash()
 app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
-
-### SET LAYOUT
 app.layout = html.Div([
     html.H4(children='HODAC Threshold Explorer'),
     slider,
     roc_graph,
-    volume,
+    volume_plot,
     pie_chart,
     histogram,
     cost_graph
@@ -142,7 +84,7 @@ app.layout = html.Div([
 #########
 
 
-
+# TODO: move to modules
 ######## callbacks
 @app.callback(Output('pie_chart', 'figure'),
               [Input('slider', 'value')])
@@ -214,7 +156,6 @@ def make_pie_figure(slider):
     figure = dict(data=data, layout=dict(autosize=True, title='Confusion Matrix Explanation'))
     
     return figure
-
 
 @app.callback(Output('histogram', 'figure'),
               [Input('slider', 'value')])
