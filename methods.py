@@ -45,7 +45,7 @@ def bar_coordinates(hista, threshold, binsa,  resolution, acc,
 		if x >threshold:
 			colors1 = [[FP_COLOUR for c in range(class_0)], [TP_COLOUR for c in range(class_1)]]
 		else:
-			colors1 = [[FN_COLOUR for c in range(class_0)], [TN_COLOUR for c in range(class_1)]]
+			colors1 = [[TN_COLOUR for c in range(class_0)], [FN_COLOUR for c in range(class_1)]]
 		#update vars
 		cnt = cnt+1
 		hist_exp1.append([y for y in y_points])
