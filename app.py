@@ -730,7 +730,7 @@ def make_histogram(slider):
     figure = go.Figure(
         data=[
             go.Bar(
-                x=['TP', 'FP', 'TN', 'FN'],
+                x=['TP', 'TN', 'FP', 'FN'],
                 y=[TP, TN, FP, FN],
                 marker=dict(
                     color=[TP_COLOUR, TN_COLOUR, FP_COLOUR, FN_COLOUR],
