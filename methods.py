@@ -21,11 +21,11 @@ def bar_coordinates(hista, threshold, binsa,  resolution, acc,
 	colors_2 = []
 	#Get the counts for each class for each column on the histogram
 	target_acc = acc.score.as_matrix()
-	print(target_acc)
+	# print(target_acc)
 
 	# create this as a percentage
 	target_hist = []
-	print(binsa)
+	# print(binsa)
 
 	for cnt in range(0,len(target_acc),2):
 		target_hist.append( (target_acc[cnt]/ ( target_acc[cnt] + target_acc[cnt+1])))
@@ -108,7 +108,8 @@ def histogram_data_dict(input_df, resolution, bins, target_col = 'class', score_
     colors_dict = dict()
 
     for threshold in binsa:
-        hist_exp, bins_exp, colors_exp= bar_coordinates(hista, threshold, binsa, resolution, acc)
+        hist_exp, bins_exp, colors_exp= bar_coordinates(hista, threshold, binsa, resolution, acc,
+        	TP_COLOUR=TP_COLOUR, FP_COLOUR=FP_COLOUR, TN_COLOUR=TN_COLOUR, FN_COLOUR=FN_COLOUR)
         colors_dict[threshold] = colors_exp
                 
 
