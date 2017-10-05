@@ -3,9 +3,9 @@ import pandas as pd
 import numpy as np
 
 def round_res (vals, resolution):
-	#assert(isinstance(vals, list)), "Input should be a list"
-	vals_rd = [ np.round (value / resolution) for value in vals]
-	return vals_rd
+    #assert(isinstance(vals, list)), "Input should be a list"
+    vals_rd = [ np.round (value / resolution) for value in vals]
+    return vals_rd
 
 def bar_coordinates(hista, threshold, binsa,  resolution, acc,
 	TP_COLOUR = '#e03344',FP_COLOUR = '#ef7b28',TN_COLOUR = '#09ef33',FN_COLOUR = '#aabf22'):
@@ -71,46 +71,46 @@ def bar_coordinates(hista, threshold, binsa,  resolution, acc,
 
 
 def histogram_data(input_df, threshold, resolution, bins, target_col = 'class', score_col = 'score',
-	TP_COLOUR = '#e03344',FP_COLOUR = '#ef7b28',TN_COLOUR = '#09ef33',FN_COLOUR = '#aabf22'):
-	df = input_df.copy()
-	hista, binsa = np.histogram(df[score_col], bins = bins, range = [0,1])
-	df['cat']= pd.cut(df[score_col], binsa)
-	acc =  df[['cat',target_col,score_col]].groupby(['cat',target_col]).count()
-	acc.fillna(0,inplace=True)
-	# Get now the data to plot 
-	# -> for a bar of size 2, we want for exampole to create 8 vertical coordinates
+    TP_COLOUR = '#e03344',FP_COLOUR = '#ef7b28',TN_COLOUR = '#09ef33',FN_COLOUR = '#aabf22'):
+    df = input_df.copy()
+    hista, binsa = np.histogram(df[score_col], bins = bins, range = [0,1])
+    df['cat']= pd.cut(df[score_col], binsa)
+    acc =  df[['cat',target_col,score_col]].groupby(['cat',target_col]).count()
+    acc.fillna(0,inplace=True)
+    # Get now the data to plot 
+    # -> for a bar of size 2, we want for exampole to create 8 vertical coordinates
 
-	hist_exp, bins_exp, colors_exp= bar_coordinates(hista, threshold, binsa, resolution, acc)
+    hist_exp, bins_exp, colors_exp= bar_coordinates(hista, threshold, binsa, resolution, acc)
 
-	return hist_exp, bins_exp, colors_exp
+    return hist_exp, bins_exp, colors_exp
 
 
 def histogram_data_dict(input_df, resolution, bins, target_col = 'class', score_col = 'score',
-	TP_COLOUR = '#e03344',FP_COLOUR = '#ef7b28',TN_COLOUR = '#09ef33',FN_COLOUR = '#aabf22'):
-	"""
-	Receive data frame and based on score and target data, create a dicionarly of flatten histogram 
-	for each threshold for plotting purposes.
+    TP_COLOUR = '#e03344',FP_COLOUR = '#ef7b28',TN_COLOUR = '#09ef33',FN_COLOUR = '#aabf22'):
+    """
+    Receive data frame and based on score and target data, create a dicionarly of flatten histogram 
+    for each threshold for plotting purposes.
 
 
-	"""
+    """
 
-	df = input_df.copy()
-	hista, binsa = np.histogram(df[score_col], bins = bins, range = [0,1])
-	# Bin scores according to the histogram data
-	df['cat']= pd.cut(df[score_col], binsa)
-	# Split histogram data by target column and get the counts for each class for each bin 
-	acc =  df[['cat',target_col,score_col]].groupby(['cat',target_col]).count()
-	acc.fillna(0,inplace=True)
-	# Get now the data to plot 
-	# -> for a bar of size 20, we want for exampole to create 8 data points, and the coloring split according 
-	#     to the known target value
+    df = input_df.copy()
+    hista, binsa = np.histogram(df[score_col], bins = bins, range = [0,1])
+    # Bin scores according to the histogram data
+    df['cat']= pd.cut(df[score_col], binsa)
+    # Split histogram data by target column and get the counts for each class for each bin 
+    acc =  df[['cat',target_col,score_col]].groupby(['cat',target_col]).count()
+    acc.fillna(0,inplace=True)
+    # Get now the data to plot 
+    # -> for a bar of size 20, we want for exampole to create 8 data points, and the coloring split according 
+    #     to the known target value
 
-	colors_dict = dict()
+    colors_dict = dict()
 
-	for threshold in binsa:
-		hist_exp, bins_exp, colors_exp= bar_coordinates(hista, threshold, binsa, resolution, acc)
-		colors_dict[threshold] = colors_exp
-				
+    for threshold in binsa:
+        hist_exp, bins_exp, colors_exp= bar_coordinates(hista, threshold, binsa, resolution, acc)
+        colors_dict[threshold] = colors_exp
+                
 
 
-	return hist_exp, bins_exp, colors_dict
+    return hist_exp, bins_exp, colors_dict
