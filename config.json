@@ -1,0 +1,15 @@
+{
+	
+	"confusion_matrix": {
+		
+		"true_positive": { "colour": "#e03344", "text": "hit" },
+		
+		"false_positive": { "colour": "#ef7b28", "text": "false alarm" },
+		
+		"true_negative": { "colour": "#09ef33", "text": "meh" },
+		
+		"false_negative": { "colour": "#aabf22", "text": "miss" }
+		
+	}
+
+}
