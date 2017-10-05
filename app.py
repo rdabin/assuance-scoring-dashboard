@@ -335,6 +335,7 @@ app.layout = html.Div([
                 className='row'
             ),
             html.Div([
+                html.Div([histogram], className='two columns'),
                 html.Div([
                     dcc.Graph(
                         id='hist_with_slider',
@@ -344,7 +345,6 @@ app.layout = html.Div([
                 ], className='four columns'),
                 html.Div([volume1], className='three columns'),
                 html.Div([volume2], className='three columns'),
-                html.Div([histogram], className='two columns'),
             ], className='row'),
         ],
         id='grid'
@@ -354,19 +354,19 @@ app.layout = html.Div([
             html.Td([
                 html.H5('Recall'),
                 pie_chart1,
-            ], style={'text-align': 'center', 'width': '20%', 'vertical-align': 'top'}),
+            ], style={'text-align': 'center', 'vertical-align': 'top'}),
             html.Td([
                 html.H5('Precision'),
                 pie_chart2,
-            ], style={'text-align': 'center', 'width': '20%', 'vertical-align': 'top'}),
+            ], style={'text-align': 'center', 'vertical-align': 'top'}),
             html.Td([
                 html.H5('Accuracy'),
                 pie_chart3,
-            ], style={'text-align': 'center', 'width': '20%', 'vertical-align': 'top'}),
+            ], style={'text-align': 'center', 'vertical-align': 'top'}),
             html.Td([
                 html.H5('False Positive Rate'),
                 pie_chart4,
-            ], style={'text-align': 'center', 'width': '20%', 'vertical-align': 'top'}),
+            ], style={'text-align': 'center', 'vertical-align': 'top'}),
         ]),
     ],
     style={'width': '100%'},
@@ -733,7 +733,7 @@ def make_histogram(slider):
                 x=['TP', 'FP', 'TN', 'FN'],
                 y=[TP, FP, TN, FN],
                 marker=dict(
-                    color=[TP_COLOUR, TN_COLOUR, FP_COLOUR, FN_COLOUR],
+                    color=[TP_COLOUR, FP_COLOUR, TN_COLOUR, FN_COLOUR],
                     line=dict(
                         color='rgb(8,48,107)',
                     )
