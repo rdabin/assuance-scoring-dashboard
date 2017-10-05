@@ -23,14 +23,14 @@ STATIC_PATH = os.path.join(
 )
 
 
-TP_COLOUR = 'rgb(146, 123, 21)' #'#e03344'
-FP_COLOUR =  '#808080'
+TP_COLOUR = 'rgb(175, 49, 35)' #'#e03344'
 TN_COLOUR = 'rgb(151, 179, 100)' #'#09ef33'
+FP_COLOUR = '#808080'
 FN_COLOUR = '#c0c0c0'
 
 TP_TEXT = 'hit'
-FP_TEXT = 'false alarm'
 TN_TEXT = 'meh'
+FP_TEXT = 'false alarm'
 FN_TEXT = 'miss'
 
 # define some parameters for histogram
