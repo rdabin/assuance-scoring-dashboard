@@ -23,10 +23,10 @@ STATIC_PATH = os.path.join(
 )
 
 
-TP_COLOUR = '#e03344'
-FP_COLOUR = '#ef7b28'
-TN_COLOUR = '#09ef33'
-FN_COLOUR = '#aabf22'
+TP_COLOUR = 'rgb(146, 123, 21)' #'#e03344'
+FP_COLOUR =  '#808080'
+TN_COLOUR = 'rgb(151, 179, 100)' #'#09ef33'
+FN_COLOUR = '#c0c0c0'
 
 TP_TEXT = 'hit'
 FP_TEXT = 'false alarm'
@@ -253,8 +253,33 @@ volume2 = dcc.Graph(
         }
     )
 
-pie_chart = dcc.Graph(
-    id='pie_chart',
+pie_layout = dict(
+    autosize=True,
+    width=300,
+    height=300,
+    # margin={'l': 10, 'b': 10, 't': 10, 'r': 10},
+    showlegend=False,
+    title=False
+)
+
+
+pie_chart1 = dcc.Graph(
+    id='pie_chart1',
+    config={'displayModeBar': False},
+)
+
+pie_chart2 = dcc.Graph(
+    id='pie_chart2',
+    config={'displayModeBar': False},
+)
+
+pie_chart3 = dcc.Graph(
+    id='pie_chart3',
+    config={'displayModeBar': False},
+)
+
+pie_chart4 = dcc.Graph(
+    id='pie_chart4',
     config={'displayModeBar': False},
 )
 
@@ -277,20 +302,36 @@ app = dash.Dash()
 
 
 app.layout = html.Div([
+    html.Table([
+        html.Tr([
+            html.Td([
+                html.Div([
+                    html.Img(
+                        id='logo',
+                        src=os.path.join(STATIC_ROUTE, "homeoffice.png"),
+                        style={'width': '60px', 'height': '60px', 'float': 'left'}
+                    ),
+                    html.H2([
+                        'HODAC threshold explorer',
+                        html.Span([],
+                            id='threshold',
+                            style={'float': 'right', 'padding-right': '10px'},
+                        ),
+                    ], style={'padding-top': '1rem'}),
+                ]),
+            ], colSpan=4),
+        ]),
+        html.Tr([
+            html.Td([
+                slider,
+            ], colSpan=4),
+        ]),
+    ],
+    style={'width': '100%'},
+    ),
     html.Div(
         [
-            html.Div([
-                html.Img(
-                    id='logo',
-                    src=os.path.join(STATIC_ROUTE, "homeoffice.png"),
-                    style={'width': '60px', 'height': '60px', 'float': 'left'}
-                ),
-                html.H2(children='HODAC threshold explorer', style={'padding-top': '1rem'}),
-                html.Div([slider], className='twelve columns'),
-            ], className='row'),
             html.Div(
-                id='threshold',
-                style={'font-size': '16pt', 'padding-top': '10px', 'font-weight': 'bold'},
                 className='row'
             ),
             html.Div([
@@ -300,15 +341,36 @@ app.layout = html.Div([
                         config={'displayModeBar': False},
                         animate=False
                     )
-                ], className='six columns'),
+                ], className='four columns'),
                 html.Div([volume1], className='three columns'),
-                html.Div([volume2], className='three columns')
-            ], className='row')
+                html.Div([volume2], className='three columns'),
+                html.Div([histogram], className='two columns'),
+            ], className='row'),
         ],
         id='grid'
     ),
-    pie_chart,
-    histogram,
+    html.Table([
+        html.Tr([
+            html.Td([
+                html.H5('Recall'),
+                pie_chart1,
+            ], style={'text-align': 'center', 'width': '20%', 'vertical-align': 'top'}),
+            html.Td([
+                html.H5('Precision'),
+                pie_chart2,
+            ], style={'text-align': 'center', 'width': '20%', 'vertical-align': 'top'}),
+            html.Td([
+                html.H5('Accuracy'),
+                pie_chart3,
+            ], style={'text-align': 'center', 'width': '20%', 'vertical-align': 'top'}),
+            html.Td([
+                html.H5('False Positive Rate'),
+                pie_chart4,
+            ], style={'text-align': 'center', 'width': '20%', 'vertical-align': 'top'}),
+        ]),
+    ],
+    style={'width': '100%'},
+    ),
     roc_graph,
     cost_graph
 ], style={})
@@ -325,7 +387,9 @@ app.css.append_css({
 })
 
 
-# callbacks
+# ----------------------------------------------------------------------------
+# CONFUSION HISTOGRAM
+# ----------------------------------------------------------------------------
 
 @app.callback(
     dash.dependencies.Output('hist_with_slider', 'figure'),
@@ -381,7 +445,9 @@ def update_histogram(threshold):
 #     return 'Threshold: "{}"'.format(threshold)
 
 
-
+# ----------------------------------------------------------------------------
+# VOLUME BAR CHARTS
+# ----------------------------------------------------------------------------
 
 @app.callback(Output('volume1', 'figure'),
               [Input('slider', 'value')])
@@ -511,9 +577,22 @@ def make_volume2(slider):
     return figure
 
 
-@app.callback(Output('pie_chart', 'figure'),
+# ----------------------------------------------------------------------------
+# PIE CHARTS
+# ----------------------------------------------------------------------------
+
+pie_layout = dict(
+    width=350,
+    # height=350,
+    autosize=True,
+    # margin={'l': 10, 'b': 10, 't': 10, 'r': 10},
+    showlegend=False,
+    title=''
+)
+
+@app.callback(Output('pie_chart1', 'figure'),
               [Input('slider', 'value')])
-def make_pie_figure(slider):
+def make_pie1_figure(slider):
 
     tp, fp, tn, fn = mc.confusion_matrix(raw_data, slider)
 
@@ -533,7 +612,24 @@ def make_pie_figure(slider):
             marker=dict(colors=[TP_COLOUR, FN_COLOUR]),
             # Haven't been able to get this annotation to work yet
             # annotations=[dict(text='Recall', x=0.2, y=0.9, xref='paper', yref='paper')]
-        ),
+        )
+    ]
+
+    figure=dict(
+        data=data,
+        layout=pie_layout
+    )
+
+    return figure
+
+
+@app.callback(Output('pie_chart2', 'figure'),
+              [Input('slider', 'value')])
+def make_pie2_figure(slider):
+
+    tp, fp, tn, fn = mc.confusion_matrix(raw_data, slider)
+
+    data = [
         dict(
             type='pie',
             ids=['TP', 'FP'],
@@ -547,7 +643,24 @@ def make_pie_figure(slider):
             sort=False,
             domain={"x": [0.6, 1], 'y':[0.6, 1]},
             marker=dict(colors=[TP_COLOUR, FP_COLOUR])
-        ),
+        )
+    ]
+
+    figure = dict(
+        data=data,
+        layout=pie_layout
+    )
+
+    return figure
+
+
+@app.callback(Output('pie_chart3', 'figure'),
+              [Input('slider', 'value')])
+def make_pie3_figure(slider):
+
+    tp, fp, tn, fn = mc.confusion_matrix(raw_data, slider)
+
+    data = [
         dict(
             type='pie',
             ids=['TP', 'TN', 'FP', 'FN'],
@@ -566,7 +679,24 @@ def make_pie_figure(slider):
             sort=False,
             domain={"x": [0, 0.4], 'y':[0, 0.4]},
             marker=dict(colors=[TP_COLOUR, TN_COLOUR, FP_COLOUR, FN_COLOUR])
-        ),
+        )
+    ]
+
+    figure = dict(
+        data=data,
+        layout=pie_layout
+    )
+
+    return figure
+
+
+@app.callback(Output('pie_chart4', 'figure'),
+              [Input('slider', 'value')])
+def make_pie4_figure(slider):
+
+    tp, fp, tn, fn = mc.confusion_matrix(raw_data, slider)
+
+    data = [
         dict(
             type='pie',
             ids=['FP', 'TN'],
@@ -585,11 +715,7 @@ def make_pie_figure(slider):
 
     figure = dict(
         data=data,
-        layout=dict(
-            autosize=True,
-            showlegend=False,
-            title='Confusion Matrix Explanation'
-        )
+        layout=pie_layout
     )
 
     return figure
@@ -632,8 +758,7 @@ def make_histogram(slider):
     [Input(component_id='slider', component_property='value')]
 )
 def update_text(input_value):
-    return 'threshold={}'.format(input_value)
-#    return input_value
+    return 'threshold = %.02f' % input_value
 
 
 if __name__ == '__main__':
